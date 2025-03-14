@@ -1,0 +1,12 @@
+@startuml
+class User
+
+User - Robot : Engine start/stop >
+User -- Server : User Interface >
+Robot -- Server : Go to Graffiti <
+Server - Camera : Automatic Control >
+Graffiti -- Server : Graffiti Info >
+Robot - Graffiti : Goes to Graffiti >
+Graffiti -- Camera : Detection <
+
+@enduml

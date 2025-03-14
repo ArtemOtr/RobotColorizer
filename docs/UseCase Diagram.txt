@@ -1,0 +1,16 @@
+@startuml
+:User: --> (TurnOn)
+
+"Пользователь" as User
+"Вкл/Выкл" as (TurnOn)
+
+Server --> (ReadCameraImage)
+Server --> (RestrictedImageDetection)
+Server --> (RecogniseRobot)
+Server --> (SendRobotToThePlace)
+
+"Считать изображение с камер" as (ReadCameraImage)
+"Детекция граффити" as (RestrictedImageDetection)
+"Распознать робота" as (RecogniseRobot)
+"Отправить робота на место граффити" as (SendRobotToThePlace)
+@enduml

@@ -22,6 +22,8 @@ public:
     
     virtual bool activate_painting();
 
+    virtual std::vector<double> get_robot_place();
+    
 private:
     double x;
     double y;
@@ -46,6 +48,9 @@ public:
 
     bool test_activate_painting();
     
+    void test_get_robot_place();
+    
+
 };
 
 

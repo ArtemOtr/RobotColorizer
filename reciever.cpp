@@ -1,7 +1,9 @@
 #include "commands_reciever.h"
 #include <vector>
 #include <iostream>
-
+#include <cmath> 
+#include <thread>
+#include <chrono>
 
 Commands_Reciever::Commands_Reciever() : server(), colorizer() {}  //инициализация объектов
 
@@ -13,10 +15,70 @@ std::vector<int> Commands_Reciever::receive_graffiti_location() {
     return server.get_graffiti_location();
 }
 
-bool Commands_Reciever::move_to_graffiti(const std::vector<int>& coordinates) {
-    if (coordinates.size() < 2) return false;
-    // Логика перемещения
-    return true;
+bool Commands_Reciever::move_to_graffiti(const std::vector<int>& target_coords) {
+    if (target_coords.size() < 2) return false;
+
+    const double eps = 0.5; // Точность достижения
+    const int max_steps = 100; // Ограничение шагов
+    int steps = 0;
+    
+    while (steps++ < max_steps) {
+        std::vector<double> current_pos = colorizer.get_robot_place();
+        double dx = target_coords[0] - current_pos[0];
+        double dy = target_coords[1] - current_pos[1];
+
+        // Вывод текущей позиции
+        std::cout << "Текущая позиция: [" << current_pos[0] << ", " << current_pos[1] << "]\n";
+        std::cout << "Цель: [" << target_coords[0] << ", " << target_coords[1] << "]\n";
+
+        // Проверка достижения цели
+        if (std::abs(dx) < eps && std::abs(dy) < eps) {
+            std::cout << "Цель достигнута!\n";
+            return true;
+        }
+
+        // Определяем главное направление (X или Y)
+        bool move_x = std::abs(dx) > std::abs(dy);
+
+        // Пытаемся двигаться по главному направлению
+        if (move_x) {
+            if (dx > eps) {
+                colorizer.move_forward(1); // Вперед по X
+            } 
+            else if (dx < -eps) {
+                colorizer.move_backward(1); // Назад по X
+            }
+        } 
+        else {
+            if (dy > eps) {
+                colorizer.turn_left(90);
+                colorizer.move_forward(1); // Вперед по Y
+                colorizer.turn_right(90);
+            } 
+            else if (dy < -eps) {
+                colorizer.turn_left(90);
+                colorizer.move_backward(1); // Назад по Y
+                colorizer.turn_right(90);
+            }
+        }
+
+        // Проверка стены (заглушка)
+        if (steps % 500000 == 0) { // Каждые 5 шагов "стена"
+            std::cout << "Обнаружена стена! Меняю направление...\n";
+            colorizer.turn_right(90); // Поворот при препятствии
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    }
+
+    std::cout << "Превышено максимальное количество шагов!\n";
+    return false;
+}
+
+
+// Простая функция задержки
+void sleep(int milliseconds) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
 
 bool Commands_Reciever::paint_over_graffiti() {

@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/RobotColorizer.dir/colorizer.cpp.o CMakeFiles/RobotColorizer.dir/main.cpp.o CMakeFiles/RobotColorizer.dir/reciever.cpp.o CMakeFiles/RobotColorizer.dir/server.cpp.o -o RobotColorizer

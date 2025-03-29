@@ -1,3 +1,0 @@
-/home/allabaichik/МАИ ДЗ/ПРОГА/RobotColorizer/build/CMakeFiles/RobotColorizer.dir
-/home/allabaichik/МАИ ДЗ/ПРОГА/RobotColorizer/build/CMakeFiles/edit_cache.dir
-/home/allabaichik/МАИ ДЗ/ПРОГА/RobotColorizer/build/CMakeFiles/rebuild_cache.dir

@@ -1,63 +1,72 @@
-#include "colorizer.h"
-#include <exception>
+#include "commands_reciever.h" // Уже включает colorizer.h
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 int main() {
     Test_Colorizer robot;
+    Test_Reciever receiver;
     std::string input;
 
-    std::cout << "Введите команду (left/right/forward/backward <значение>):" << std::endl;
-    std::cout << "Пример: left 45 forward 10" << std::endl;
-    std::cout << "Для выхода введите 'exit'." << std::endl;
+    std::cout << "Доступные команды:\n"
+              << "1. Управление роботом: left/right/forward/backward/set_speed <значение>\n"
+              << "2. Команды ресивера: move_to <x> <y>, paint, return_home\n"
+              << "3. Выход: exit\n"
+              << "Пример: move_to 10 5\n"
+              << "        left 90 forward 2\n";
 
     while (true) {
+        std::cout << "\nВведите команду: ";
         std::getline(std::cin, input);
+        
         if (input == "exit") {
             break;
         }
 
         std::istringstream iss(input);
         std::string command;
-        double value;
+        iss >> command;
 
-        while (iss >> command) {
-            if (command == "left") {
-                if (iss >> value) {
-                    robot.test_turn_left(value);
-                } else {
-                    std::cout << "Ошибка: не указано значение для команды 'left'." << std::endl;
+        try {
+            if (command == "left" || command == "right" || 
+                command == "forward" || command == "backward" || 
+                command == "set_speed") {
+                
+                double value;
+                if (!(iss >> value)) {
+                    throw std::runtime_error("Не указано значение для команды " + command);
                 }
-            } else if (command == "right") {
-                if (iss >> value) {
-                    robot.test_turn_right(value);
-                } else {
-                    std::cout << "Ошибка: не указано значение для команды 'right'." << std::endl;
-                }
-            } else if (command == "forward") {
-                if (iss >> value) {
-                    robot.test_move_forward(static_cast<unsigned int>(value));
-                } else {
-                    std::cout << "Ошибка: не указано значение для команды 'forward'." << std::endl;
-                }
-            } else if (command == "backward") {
-                if (iss >> value) {
-                    robot.test_move_backward(static_cast<unsigned int>(value));
-                } else {
-                    std::cout << "Ошибка: не указано значение для команды 'backward'." << std::endl;
-                }
-               
-            } else if (command == "set_speed") {
-                if (iss >> value) {
-                    robot.test_set_speed(static_cast<unsigned int>(value));
-                } else {
-                    std::cout << "Ошибка: не указано значение для команды 'backward'." << std::endl;
-                }
-               
-            } else {
-                std::cout << "Ошибка: неизвестная команда '" << command << "'." << std::endl;
+
+                if (command == "left") robot.test_turn_left(value);
+                else if (command == "right") robot.test_turn_right(value);
+                else if (command == "forward") robot.test_move_forward(static_cast<unsigned int>(value));
+                else if (command == "backward") robot.test_move_backward(static_cast<unsigned int>(value));
+                else if (command == "set_speed") robot.test_set_speed(value);
             }
+            else if (command == "move_to") {
+                int x, y;
+                if (!(iss >> x >> y)) {
+                    throw std::runtime_error("Не указаны координаты x и y");
+                }
+                receiver.test_move_to_graffiti({x, y});
+            }
+            else if (command == "paint") {
+                receiver.test_paint_over_graffiti();
+            }
+            else if (command == "return_home") {
+                receiver.test_return_to_robot_base();
+            }
+            else if (command == "get_pos") {
+                std::vector<double> pos = robot.get_robot_place(); // Явное указание типа
+                std::cout << "Текущая позиция: " << pos[0] << " " << pos[1] << std::endl;
+            }
+            else {
+                throw std::runtime_error("Неизвестная команда: " + command);
+            }
+        } 
+        catch (const std::exception& e) {
+            std::cerr << "Ошибка: " << e.what() << std::endl;
         }
     }
 

@@ -6,7 +6,7 @@
 
 class Colorizer {
 public:
-    
+
     Colorizer();
     ~Colorizer();
 
@@ -19,11 +19,11 @@ public:
     virtual void turn_right(double usr_angle);
 
     virtual void turn_left(double usr_angle);
-    
+
     virtual bool activate_painting();
 
     virtual std::vector<double> get_robot_place();
-    
+
 private:
     double x;
     double y;
@@ -31,7 +31,7 @@ private:
     double speed;
 };
 
-class Test_Colorizer: public Colorizer{
+class Test_Colorizer : public Colorizer {
 public:
     Test_Colorizer();
     ~Test_Colorizer();
@@ -47,12 +47,8 @@ public:
     void test_turn_left(double usr_angle);
 
     bool test_activate_painting();
-    
+
     void test_get_robot_place();
-    
+
 
 };
-
-
-
-

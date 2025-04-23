@@ -14,5 +14,5 @@ bool Server::detect_graffiti() {
 
 std::vector<int> Server::get_graffiti_location() {
     std::cout << "Определение координат граффити..." << std::endl;
-    return {10, 20}; // заглушка
+    return { 10, 20 }; // заглушка
 }

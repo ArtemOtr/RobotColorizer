@@ -43,7 +43,7 @@ bool Colorizer::activate_painting() {
 }
 
 std::vector<double> Colorizer::get_robot_place() {
-    std::vector<double> rob_coords = {x,y};
+    std::vector<double> rob_coords = { x,y };
     return rob_coords;
 }
 
@@ -81,11 +81,11 @@ void Test_Colorizer::test_turn_left(double usr_angle) {
 
 bool Test_Colorizer::test_activate_painting() {
     return Colorizer::activate_painting();
-    
+
 }
 
 void Test_Colorizer::test_get_robot_place() {
     std::vector<double> rob_coords = Colorizer::get_robot_place();
-    std::cout << "[Тест] Место робота в данный момент: (" 
-              << rob_coords[0] << ", " << rob_coords[1] << ")" << std::endl;
+    std::cout << "[Тест] Место робота в данный момент: ("
+        << rob_coords[0] << ", " << rob_coords[1] << ")" << std::endl;
 }

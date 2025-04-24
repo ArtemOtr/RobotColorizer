@@ -1,4 +1,5 @@
-#include "robot_controller.h" // Уже включает colorizer.h
+#include "robot_controller.h" // РЈР¶Рµ РІРєР»СЋС‡Р°РµС‚ colorizer.h
+#include "mqtt_handler.h"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -8,18 +9,19 @@ int main() {
     setlocale(LC_ALL, "Russian");
 
     Test_Colorizer robot;
-    Test_Controller receiver;
+    Test_Controller controller;
+    MQTT_Handler mqtt("robot_client", "localhost", 1883, controller);
     std::string input;
 
-    std::cout << "Доступные команды:\n"
-        << "1. Управление роботом: left/right/forward/backward/set_speed <значение> \n"
-        << "2. Команды ресивера: move_to <x> <y>, paint, return_home\n"
-        << "3. Выход: exit\n"
-        << "Пример: move_to 10 5\n"
+    std::cout << "Р”РѕСЃС‚СѓРїРЅС‹Рµ РєРѕРјР°РЅРґС‹:\n"
+        << "1. РЈРїСЂР°РІР»РµРЅРёРµ СЂРѕР±РѕС‚РѕРј: left/right/forward/backward/set_speed <Р·РЅР°С‡РµРЅРёРµ> \n"
+        << "2. РљРѕРјР°РЅРґС‹ СЂРµСЃРёРІРµСЂР°: move_to <x> <y>, paint, return_home\n"
+        << "3. Р’С‹С…РѕРґ: exit\n"
+        << "РџСЂРёРјРµСЂ: move_to 10 5\n"
         << "        left 90 forward 2\n";
 
     while (true) {
-        std::cout << "\nВведите команду: ";
+        std::cout << "\nР’РІРµРґРёС‚Рµ РєРѕРјР°РЅРґСѓ: ";
         std::getline(std::cin, input);
 
         if (input == "exit") {
@@ -37,7 +39,7 @@ int main() {
 
                 double value;
                 if (!(iss >> value)) {
-                    throw std::runtime_error("Не указано значение для команды " + command);
+                    throw std::runtime_error("РќРµ СѓРєР°Р·Р°РЅРѕ Р·РЅР°С‡РµРЅРёРµ РґР»СЏ РєРѕРјР°РЅРґС‹ " + command);
                 }
 
                 if (command == "left") robot.test_turn_left(value);
@@ -49,26 +51,26 @@ int main() {
             else if (command == "move_to") {
                 int x, y;
                 if (!(iss >> x >> y)) {
-                    throw std::runtime_error("Не указаны координаты x и y");
+                    throw std::runtime_error("РќРµ СѓРєР°Р·Р°РЅС‹ РєРѕРѕСЂРґРёРЅР°С‚С‹ x Рё y");
                 }
-                receiver.test_move_to_graffiti({ x, y });
+                controller.test_move_to_graffiti({ x, y });
             }
             else if (command == "paint") {
-                receiver.test_paint_over_graffiti();
+                controller.test_paint_over_graffiti();
             }
             else if (command == "return_home") {
-                receiver.test_return_to_robot_base();
+                controller.test_return_to_robot_base();
             }
             else if (command == "get_pos") {
-                std::vector<double> pos = robot.get_robot_place(); // Явное указание типа
-                std::cout << "Текущая позиция: " << pos[0] << " " << pos[1] << std::endl;
+                std::vector<double> pos = robot.get_robot_place(); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+                std::cout << "РўРµРєСѓС‰Р°СЏ РїРѕР·РёС†РёСЏ: " << pos[0] << " " << pos[1] << std::endl;
             }
             else {
-                throw std::runtime_error("Неизвестная команда: " + command);
+                throw std::runtime_error("РќРµРёР·РІРµСЃС‚РЅР°СЏ РєРѕРјР°РЅРґР°: " + command);
             }
         }
         catch (const std::exception& e) {
-            std::cerr << "Ошибка: " << e.what() << std::endl;
+            std::cerr << "РћС€РёР±РєР°: " << e.what() << std::endl;
         }
     }
 

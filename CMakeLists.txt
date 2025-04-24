@@ -1,23 +1,42 @@
-﻿# CMakeList.txt: проект CMake для RobotColorizer; включите исходный код и определения,
-# укажите здесь логику для конкретного проекта.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required(VERSION 3.8)
 
-# Включение горячей перезагрузки для компиляторов MSVC, если поддерживается.
-if (POLICY CMP0141)
+# Политика для MSVC
+if(POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("RobotColorizer")
+project(RobotColorizer VERSION 1.0 LANGUAGES CXX)
 
-# Добавьте источник в исполняемый файл этого проекта.
-add_executable (RobotColorizer "main.cpp" "colorizer.cpp" "robot_controller.cpp" "server.cpp")
+# Стандарт C++
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_compile_options(/utf-8)
+# Кодировка исходников
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-finput-charset=UTF-8>")
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET RobotColorizer PROPERTY CXX_STANDARD 20)
+# Указание исходников
+set(SOURCES
+    main.cpp
+    colorizer.cpp
+    robot_controller.cpp
+    server.cpp
+    mqtt_handler.cpp
+)
+
+# Создаём исполняемый файл
+add_executable(RobotColorizer ${SOURCES})
+
+# Подключаем библиотеки напрямую
+target_link_libraries(RobotColorizer
+    PRIVATE 
+        mosquittopp
+        mosquitto
+)
+
+# Windows defines
+if(WIN32)
+    target_compile_definitions(RobotColorizer PRIVATE "WIN32_LEAN_AND_MEAN")
 endif()
-
-# TODO: Добавьте тесты и целевые объекты, если это необходимо.

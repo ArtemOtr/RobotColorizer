@@ -5,7 +5,7 @@
 #include "server.h"
 #include "colorizer.h"
 
-class Robot_Controller {
+class Robot_Controller: public Colorizer {
 public:
     Robot_Controller();
     virtual ~Robot_Controller();

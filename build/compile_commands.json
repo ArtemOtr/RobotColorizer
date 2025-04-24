@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/home/allabaichik/МАИ ДЗ/RobotColorizer/build",
+  "command": "/usr/bin/g++   -g -std=c++20 -finput-charset=UTF-8 -o CMakeFiles/RobotColorizer.dir/main.cpp.o -c \"/home/allabaichik/МАИ ДЗ/RobotColorizer/main.cpp\"",
+  "file": "/home/allabaichik/МАИ ДЗ/RobotColorizer/main.cpp",
+  "output": "CMakeFiles/RobotColorizer.dir/main.cpp.o"
+},
+{
+  "directory": "/home/allabaichik/МАИ ДЗ/RobotColorizer/build",
+  "command": "/usr/bin/g++   -g -std=c++20 -finput-charset=UTF-8 -o CMakeFiles/RobotColorizer.dir/colorizer.cpp.o -c \"/home/allabaichik/МАИ ДЗ/RobotColorizer/colorizer.cpp\"",
+  "file": "/home/allabaichik/МАИ ДЗ/RobotColorizer/colorizer.cpp",
+  "output": "CMakeFiles/RobotColorizer.dir/colorizer.cpp.o"
+},
+{
+  "directory": "/home/allabaichik/МАИ ДЗ/RobotColorizer/build",
+  "command": "/usr/bin/g++   -g -std=c++20 -finput-charset=UTF-8 -o CMakeFiles/RobotColorizer.dir/robot_controller.cpp.o -c \"/home/allabaichik/МАИ ДЗ/RobotColorizer/robot_controller.cpp\"",
+  "file": "/home/allabaichik/МАИ ДЗ/RobotColorizer/robot_controller.cpp",
+  "output": "CMakeFiles/RobotColorizer.dir/robot_controller.cpp.o"
+},
+{
+  "directory": "/home/allabaichik/МАИ ДЗ/RobotColorizer/build",
+  "command": "/usr/bin/g++   -g -std=c++20 -finput-charset=UTF-8 -o CMakeFiles/RobotColorizer.dir/server.cpp.o -c \"/home/allabaichik/МАИ ДЗ/RobotColorizer/server.cpp\"",
+  "file": "/home/allabaichik/МАИ ДЗ/RobotColorizer/server.cpp",
+  "output": "CMakeFiles/RobotColorizer.dir/server.cpp.o"
+},
+{
+  "directory": "/home/allabaichik/МАИ ДЗ/RobotColorizer/build",
+  "command": "/usr/bin/g++   -g -std=c++20 -finput-charset=UTF-8 -o CMakeFiles/RobotColorizer.dir/mqtt_handler.cpp.o -c \"/home/allabaichik/МАИ ДЗ/RobotColorizer/mqtt_handler.cpp\"",
+  "file": "/home/allabaichik/МАИ ДЗ/RobotColorizer/mqtt_handler.cpp",
+  "output": "CMakeFiles/RobotColorizer.dir/mqtt_handler.cpp.o"
+}
+]

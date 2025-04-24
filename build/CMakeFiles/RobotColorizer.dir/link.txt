@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/RobotColorizer.dir/main.cpp.o CMakeFiles/RobotColorizer.dir/colorizer.cpp.o CMakeFiles/RobotColorizer.dir/robot_controller.cpp.o CMakeFiles/RobotColorizer.dir/server.cpp.o CMakeFiles/RobotColorizer.dir/mqtt_handler.cpp.o -o RobotColorizer  -lmosquittopp -lmosquitto

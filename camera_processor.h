@@ -1,21 +1,21 @@
-#pragma once
+#ifndef CAMERA_PROCESSOR_H
+#define CAMERA_PROCESSOR_H
+
 #include <opencv2/opencv.hpp>
 #include <vector>
 
 class CameraProcessor {
 public:
     CameraProcessor();
-    virtual ~CameraProcessor();
-    
-    void setColorRange(const cv::Scalar& lower, const cv::Scalar& upper);
-    std::vector<double> processFrameWithHomography(const cv::Mat& frame);
-    bool isPainted(const cv::Mat& frame);
-    cv::Mat getColorMask(const cv::Mat& frame);  // Публичный метод для доступа к маске
+    ~CameraProcessor();
 
-protected:
-    cv::Mat applyColorMask(const cv::Mat& hsvFrame);  // Реализуем в .cpp файле
+    cv::Mat getColorMask(const cv::Mat& frame);
+    std::vector<double> processFrameWithMask(const cv::Mat& frame); // Измененное имя метода
+    cv::Mat applyColorMasks(const cv::Mat& hsvFrame);
 
 private:
-    cv::Scalar lowerColor, upperColor;
-    std::vector<cv::Point> findContours(const cv::Mat& mask);
+    std::vector<std::pair<cv::Scalar, cv::Scalar>> colorRanges;
+    const int min_contour_area = 500; // Минимальная площадь контура
 };
+
+#endif // CAMERA_PROCESSOR_H

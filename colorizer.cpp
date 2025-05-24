@@ -43,8 +43,7 @@ bool Colorizer::activate_painting() {
 }
 
 std::vector<double> Colorizer::get_robot_place() {
-    std::vector<double> rob_coords = { x,y };
-    return rob_coords;
+    return {x, y, angle}; // Добавить angle
 }
 
 // тестовый колорайзер (вывод результата в консоль)

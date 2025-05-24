@@ -5,7 +5,8 @@
 #include <opencv2/highgui.hpp>
 
 
-Robot_Controller::Robot_Controller() : colorizer() {}
+Robot_Controller::Robot_Controller(const std::string& camera_url) 
+    : server(camera_url), colorizer() {}
 
 Robot_Controller::~Robot_Controller() {
     //деструкторы server и colorizer вызовутся автоматически

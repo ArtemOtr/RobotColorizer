@@ -7,7 +7,7 @@
 
 class Robot_Controller : public Colorizer {
 public:
-    Robot_Controller();
+    explicit Robot_Controller(const std::string& camera_url = "0");
     virtual ~Robot_Controller();
 
     virtual std::vector<double> receive_graffiti_location();  // Изменено на double

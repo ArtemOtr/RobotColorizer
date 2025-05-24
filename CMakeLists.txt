@@ -31,11 +31,14 @@ set(SOURCES
 add_executable(RobotColorizer ${SOURCES})
 
 find_package(OpenCV REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(MOSQUITTO REQUIRED libmosquittopp)
 include_directories(${OpenCV_INCLUDE_DIRS})
 target_link_libraries(RobotColorizer )
 # Подключаем библиотеки напрямую
 target_link_libraries(RobotColorizer
-    ${OpenCV_LIBS} 
+    ${OpenCV_LIBS}
+    ${MOSQUITTO_LIBRARIES}
     mosquittopp
     mosquitto
 )

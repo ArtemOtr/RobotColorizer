@@ -62,6 +62,12 @@ void MQTT_Handler::parse_command(const std::string& command) {
                 send_status("Теперь скокрость робота " + std::to_string(speed));
             }
         }
+        else if (cmd == "auto_paint") {
+            if (controller.auto_approach_graffiti()) {
+                controller.paint_over_graffiti();
+                send_status("Граффити автоматически закрашено");
+    }
+}
         
     } catch(const std::exception& e) {
         send_status("Error: " + std::string(e.what()));

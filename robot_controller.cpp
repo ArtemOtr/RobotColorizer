@@ -1,22 +1,22 @@
 #include "robot_controller.h"
-#include <vector>
-#include <iostream>
-#include <cmath> 
+#include <cmath>
 #include <thread>
 #include <chrono>
+#include <opencv2/highgui.hpp>
 
-Robot_Controller::Robot_Controller() : server(), colorizer() {}  //инициализация объектов
+
+Robot_Controller::Robot_Controller() : colorizer() {}
 
 Robot_Controller::~Robot_Controller() {
     //деструкторы server и colorizer вызовутся автоматически
 }
 
-std::vector<int> Robot_Controller::receive_graffiti_location() {
-    return server.get_graffiti_location();
+std::vector<double> Robot_Controller::receive_graffiti_location() {
+    return server.get_graffiti_location_with_homography(false);
 }
 
-bool Robot_Controller::move_to_graffiti(const std::vector<int>& target_coords) {
-    if (target_coords.size() < 2) return false;
+bool Robot_Controller::move_to_graffiti(const std::vector<double>& target) {
+    if (target.size() < 2) return false;
 
     const double eps = 0.5; // Точность достижения
     const int max_steps = 100; // Ограничение шагов
@@ -24,12 +24,12 @@ bool Robot_Controller::move_to_graffiti(const std::vector<int>& target_coords) {
 
     while (steps++ < max_steps) {
         std::vector<double> current_pos = colorizer.get_robot_place();
-        double dx = target_coords[0] - current_pos[0];
-        double dy = target_coords[1] - current_pos[1];
+        double dx = target[0] - current_pos[0];
+        double dy = target[1] - current_pos[1];
 
         // Вывод текущей позиции
         std::cout << "Текущая позиция: [" << current_pos[0] << ", " << current_pos[1] << "]\n";
-        std::cout << "Цель: [" << target_coords[0] << ", " << target_coords[1] << "]\n";
+        std::cout << "Цель: [" << target[0] << ", " << target[1] << "]\n";
 
         // Проверка достижения цели
         if (std::abs(dx) < eps && std::abs(dy) < eps) {
@@ -94,14 +94,14 @@ Test_Controller::Test_Controller() {}
 
 Test_Controller::~Test_Controller() {}
 
-std::vector<int> Test_Controller::test_receive_graffiti_location() {
+std::vector<double> Test_Controller::test_receive_graffiti_location() {
     auto location = receive_graffiti_location();
     std::cout << "Test: Receiving graffiti location at ("
-        << location[0] << ", " << location[1] << ")\n";
+              << location[0] << ", " << location[1] << ")\n";
     return location;
 }
 
-bool Test_Controller::test_move_to_graffiti(const std::vector<int>& coordinates) {
+bool Test_Controller::test_move_to_graffiti(const std::vector<double>& coordinates) {
     std::cout << "Test: Moving to coordinates ("
         << coordinates[0] << ", " << coordinates[1] << ")\n";
     return move_to_graffiti(coordinates);
@@ -115,4 +115,62 @@ bool Test_Controller::test_paint_over_graffiti() {
 bool Test_Controller::test_return_to_robot_base() {
     std::cout << "Test: Returning to robot base\n";
     return return_to_robot_base();
+}
+
+bool Robot_Controller::auto_approach_graffiti(bool show_debug) {
+    // 1. Получаем координаты граффити с визуализацией
+    auto target = server.get_graffiti_location_with_homography(show_debug);
+    if(target.empty()) {
+        if(show_debug) {
+            std::cout << "Граффити не найдено!" << std::endl;
+        }
+        return false;
+    }
+    
+    double target_x = target[0];
+    double target_y = target[1];
+    
+    // 2. Получаем текущую позицию
+    auto pos = colorizer.get_robot_place();
+    double x = pos[0], y = pos[1], angle = pos[2];
+    
+    // 3. Вычисляем вектор к цели
+    double dx = target_x - x;
+    double dy = target_y - y;
+    double distance = sqrt(dx*dx + dy*dy);
+    
+    // 4. Вычисляем требуемый угол
+    double target_angle = atan2(dy, dx) * 180.0 / M_PI;
+    double angle_diff = target_angle - angle;
+    
+    // Нормализуем угол (-180..180)
+    while(angle_diff > 180) angle_diff -= 360;
+    while(angle_diff < -180) angle_diff += 360;
+    
+    // 5. Поворачиваем робота
+    if(abs(angle_diff) > 5) { // 5° - точность
+        if(angle_diff > 0) {
+            colorizer.turn_left(angle_diff);
+        } else {
+            colorizer.turn_right(-angle_diff);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    }
+    
+    // 6. Движемся к цели
+    if(distance > 0.05) { // 5 см - точность
+        colorizer.move_forward(static_cast<int>(distance * 100)); // м -> см
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+    
+    if(show_debug) {
+        std::cout << "Достигнута позиция: " << target_x << ", " << target_y << std::endl;
+    }
+    
+    return true;
+}
+
+bool Test_Controller::test_auto_approach_graffiti(bool show_debug) {
+    std::cout << "[Тест] Автоматическое наведение на граффити\n";
+    return auto_approach_graffiti(show_debug);
 }

@@ -5,18 +5,19 @@
 #include "server.h"
 #include "colorizer.h"
 
-class Robot_Controller: public Colorizer {
+class Robot_Controller : public Colorizer {
 public:
     Robot_Controller();
     virtual ~Robot_Controller();
 
-    virtual std::vector<int> receive_graffiti_location();
-    virtual bool move_to_graffiti(const std::vector<int>& coordinates);
+    virtual std::vector<double> receive_graffiti_location();  // Изменено на double
+    virtual bool move_to_graffiti(const std::vector<double>& coordinates);  // Изменено на double
     virtual bool paint_over_graffiti();
     virtual bool return_to_robot_base();
+    virtual bool auto_approach_graffiti(bool show_debug = true);
 
 protected:
-    Server server;        // Просто объекты, не указатели
+    Server server;
     Colorizer colorizer;
 };
 
@@ -25,10 +26,11 @@ public:
     Test_Controller();
     ~Test_Controller();
 
-    std::vector<int> test_receive_graffiti_location();
-    bool test_move_to_graffiti(const std::vector<int>& coordinates);
+    std::vector<double> test_receive_graffiti_location();  // Изменено на double
+    bool test_move_to_graffiti(const std::vector<double>& coordinates);  // Изменено на double
     bool test_paint_over_graffiti();
     bool test_return_to_robot_base();
+    bool test_auto_approach_graffiti(bool show_debug = true);
 };
 
 #endif // ROBOT_CONTROLLER_H

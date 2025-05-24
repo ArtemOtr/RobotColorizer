@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.8)
 
 # Политика для MSVC
 if(POLICY CMP0141)
@@ -24,16 +24,20 @@ set(SOURCES
     robot_controller.cpp
     server.cpp
     mqtt_handler.cpp
+    camera_processor.cpp
 )
 
 # Создаём исполняемый файл
 add_executable(RobotColorizer ${SOURCES})
 
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+target_link_libraries(RobotColorizer )
 # Подключаем библиотеки напрямую
 target_link_libraries(RobotColorizer
-    PRIVATE 
-        mosquittopp
-        mosquitto
+    ${OpenCV_LIBS} 
+    mosquittopp
+    mosquitto
 )
 
 # Windows defines

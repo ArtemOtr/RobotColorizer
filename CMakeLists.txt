@@ -1,49 +1,79 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 
-# Политика для MSVC
-if(POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
-endif()
+project(Robot LANGUAGES CXX)
 
-project(RobotColorizer VERSION 1.0 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(PROJECT_NAME Robot)
 
-# Стандарт C++
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-# Кодировка исходников
-add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-add_compile_options("$<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-finput-charset=UTF-8>")
-
-# Указание исходников
-set(SOURCES
-    main.cpp
-    colorizer.cpp
-    robot_controller.cpp
-    server.cpp
-    mqtt_handler.cpp
-    camera_processor.cpp
+add_executable(${PROJECT_NAME}
+    Robot.cpp
 )
 
-# Создаём исполняемый файл
-add_executable(RobotColorizer ${SOURCES})
+include(FetchContent)
+set(FETCHCONTENT_QUIET ON)
 
-find_package(OpenCV REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(MOSQUITTO REQUIRED libmosquittopp)
-include_directories(${OpenCV_INCLUDE_DIRS})
-target_link_libraries(RobotColorizer )
-# Подключаем библиотеки напрямую
-target_link_libraries(RobotColorizer
-    ${OpenCV_LIBS}
-    ${MOSQUITTO_LIBRARIES}
-    mosquittopp
-    mosquitto
+#FetchContent_Declare(
+#    mosquitto
+#    GIT_REPOSITORY https://github.com/eclipse/mosquitto.git
+#    GIT_TAG a196c2b244f248072a6b3ac8fb3f00ce0ff63dea
+#)
+set(WITH_DOCS OFF CACHE BOOL "[Mosquitto] Disablee documentation build" FORCE)
+set(DOCUMENTATION OFF CACHE BOOL "[Mosquitto] Docs" FORCE)
+set(WITH_APPS OFF CACHE BOOL "[Mosquitto] App build" FORCE)
+set(WITH_CJSON OFF CACHE BOOL "[Mosquitto] Disablee JSON build" FORCE)
+set(WITH_STATIC_LIBRARIES ON CACHE BOOL "")
+set(WITH_PIC  ON CACHE BOOL "")
+
+set(WITH_SHARED_LIBRARIES ON CACHE BOOL "[Mosquitto] lib" FORCE)
+
+set(WITH_TLS OFF CACHE BOOL "[Mosquitto] SSL/TLS support" FORCE)
+	
+
+set(CMAKE_EXE_LINKER_FLAGS "-static")
+
+#FetchContent_MakeAvailable(mosquitto)
+
+#FetchContent_GetProperties(mosquitto
+#    POPULATED mosquitto_POPULATED
+#    SOURCE_DIR mosquitto_SOURCE_DIR
+#    BINARY_DIR mosquitto_BINARY_DIR
+#)
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/mosquitto/include
+        ${mosquitto_SOURCE_DIR}/include
+
+        ${mosquitto_SOURCE_DIR}/include
+        ${mosquitto_SOURCE_DIR}/lib
+        ${mosquitto_SOURCE_DIR}/lib/cpp
+        ${mosquitto_BINARY_DIR}/lib
+        ${mosquitto_BINARY_DIR}/lib/cpp
+        ${mosquitto_BINARY_DIR}
 )
 
-# Windows defines
-if(WIN32)
-    target_compile_definitions(RobotColorizer PRIVATE "WIN32_LEAN_AND_MEAN")
-endif()
+message("DIR================== ${mosquittopp_BINARY_DIR}")
+
+
+target_link_directories(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/mosquitto/build/lib
+        ${CMAKE_SOURCE_DIR}/mosquitto/build/lib/cpp
+        ${mosquitto_SOURCE_DIR}/include
+        ${mosquitto_SOURCE_DIR}/lib
+        ${mosquitto_SOURCE_DIR}/lib/cpp
+        ${mosquitto_BINARY_DIR}
+)
+
+
+#target_link_directoriess(${PROJECT_NAME} PRIVATE mosquittopp_static.a)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE mosquittopp_static)
+target_link_libraries(${PROJECT_NAME} PRIVATE mosquitto_static)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE pthread)
+
+
+target_include_directories(Robot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
